@@ -2,7 +2,7 @@ import numpy as np
 
 
 def function(x):
-    return x * x - 2 * x + 5
+    return (x[:,0]+2*x[:,1]-7)**2+(2*x[:,0]+x[:,1]-5)**2
 
 
 def distribute(x, M):
@@ -13,12 +13,14 @@ def distribute(x, M):
     groups = [np.array(group) for group in groups]
     return np.array(groups, dtype=object)
 
-def calculate (worse, best, C, border_0, border_1):
+
+def calculate(worse, best, C, border_0, border_1):
     sol = border_1+1
-    while (sol>border_1 or sol<border_0):
-        rand = np.random.uniform(0,1)
+    while (sol > border_1 or sol < border_0):
+        rand = np.random.uniform(0, 1)
         sol = worse + C * rand * (best - worse)
     return sol
+
 
 P = 20
 iters = 20
@@ -27,8 +29,10 @@ M = 5
 C = 1.6
 a = 0
 b = 1
+n = 2
 
-x = np.random.uniform(a,b,P)
+
+x = np.random.uniform(a, b, (P,2))
 x = x[np.argsort(function(x))]
 best = x[0]
 x = distribute(x, M)
@@ -37,8 +41,7 @@ for j in range(iters):
 
     for i in range(it):
         for row in x:
-            # Преобразуем row в массив NumPy, если он вдруг оказался списком
-            row = np.array(row)
+        
 
             # Найдем худший и лучший элементы в row
             worse = row[np.argsort(function(row))][-1]
@@ -46,10 +49,12 @@ for j in range(iters):
             rand = np.random.uniform(0, 1)
 
             # Применяем правила обновления
-            if function(calculate(worse,best_row,C,a,b)) > function(worse):
-                row[np.argsort(function(row))][-1] = calculate(worse,best_row,C,a,b)
-            elif function(calculate(worse,best,C,a,b)) > function(worse):
-                row[np.argsort(function(row))][-1] = calculate(worse,best,C,a,b)
+            if function(calculate(worse, best_row, C, a, b)) > function(worse):
+                row[np.argsort(function(row))
+                    ][-1] = calculate(worse, best_row, C, a, b)
+            elif function(calculate(worse, best, C, a, b)) > function(worse):
+                row[np.argsort(function(row))
+                    ][-1] = calculate(worse, best, C, a, b)
             else:
                 row[np.argsort(function(row))][-1] = np.random.uniform(0, 1)
 
@@ -64,4 +69,3 @@ for j in range(iters):
     x = distribute(x, M)
 
 print('best =', best)
-
